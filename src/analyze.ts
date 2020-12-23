@@ -1,23 +1,7 @@
-#!/usr/bin/env node
-import { extract } from 'keyword-extractor'
+import { extract } from './keyword-extractor'
 import { readData } from './csv'
-import * as yargs from 'yargs'
 
-const { input, lang = "english" } = yargs.options({
-    input: {
-        type: 'string',
-        description: 'path to .csv file'
-    },
-    lang: {
-        type: 'string',
-        description: 'Language'
-    }
-  }).argv;
-
-if (!input) throw new Error('')
-if (!lang) throw new Error('')
-
-void async function() {
+export  async function analyze(input: string, lang: string) {
     const comments = await readData(input);
     const allText = comments.map((c: any) => c.textOriginal).join('\n');
 
@@ -26,4 +10,4 @@ void async function() {
     })
     
     console.log(keywords.join('; '))
-}()
+}

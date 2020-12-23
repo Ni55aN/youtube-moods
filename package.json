@@ -5,8 +5,8 @@
   "author": "",
   "license": "MIT",
   "scripts": {
-    "download": "ts-node --files src/** ./src/download.ts",
-    "analyze": "ts-node --files src/** ./src/analyze.ts"
+    "download": "ts-node ./src/index.ts --command download",
+    "analyze": "ts-node ./src/index.ts --command analyze"
   },
   "dependencies": {
     "axios": "^0.19.0",
