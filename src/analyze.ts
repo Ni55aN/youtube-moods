@@ -17,5 +17,7 @@ export  async function analyze(input: string, language: string) {
     console.log('===\nSentiments:')
     console.log('mean: ', mean(sentimentsScores))
     console.log('median: ', median(sentimentsScores))
+    console.log('number of positive: ', sentimentsScores.filter(s => s > 0).length)
+    console.log('number of negative: ', sentimentsScores.filter(s => s < 0).length)
     
 }
