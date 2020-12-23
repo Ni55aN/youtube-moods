@@ -1,5 +1,5 @@
-#!/usr/bin/env node
-import { apiRequest } from './utils'
+
+import { google } from 'googleapis'
 import { clearFile, appendData } from './csv'
 import * as yargs from 'yargs'
 
@@ -27,14 +27,10 @@ if (!out) throw new Error('')
 if (!videoId) throw new Error('')
 
 const getComments = async function(videoId: string, pageToken: string | null) {
-    let resp = await apiRequest('commentThreads', {
-        part: 'snippet',
-        videoId,
-        pageToken,
-        key
-    });
+    const youtube = google.youtube('v3')
+    const resp = await youtube.commentThreads.list({ videoId, part: ['snippet'], pageToken: pageToken || undefined, key })
 
-    console.debug('got results ', resp.items.length, '\nnext token ', resp.nextPageToken)
+    console.debug('got results ', resp.data.items?.length, '\nnext token ', resp.data.nextPageToken)
     return resp;
 }
 
