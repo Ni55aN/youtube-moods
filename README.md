@@ -8,5 +8,5 @@ npm run start -- --command download --key <Youtube API key> --out <path to csv f
 # for downloading fist N comments append flag --limit N
 
 # analyze text in csv file (extract all keywords from file in current version)
-npm run start -- --command analyze  --input <path to csv file> --lang russian
+npm run start -- --command analyze  --input <path to csv file> --lang ru
 ```

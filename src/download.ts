@@ -20,11 +20,9 @@ export async function download(key: string, videoId: string, out: string, limit:
 
         token = data.nextPageToken;
         
-        const comments = (data.items || []).map((item: any) => {
-            let details = item.snippet.topLevelComment.snippet;
-            
-            return details
-        });
+        const comments = (data.items || []).map(item => {
+            return item.snippet?.topLevelComment?.snippet;
+        }).filter(item => item) as youtube_v3.Schema$CommentSnippet[]
 
         count += comments.length;
 

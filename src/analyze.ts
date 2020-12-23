@@ -1,13 +1,21 @@
-import { extract } from './keyword-extractor'
+import { SentimentAnalyzer, SentimentRecord } from './node-nlp'
+import { mean, median } from 'stats-lite'
 import { readData } from './csv'
 
-export  async function analyze(input: string, lang: string) {
-    const comments = await readData(input);
-    const allText = comments.map((c: any) => c.textOriginal).join('\n');
+export  async function analyze(input: string, language: string) {
+    const sentiment = new SentimentAnalyzer();
 
-    const keywords = extract(allText, {
-        language: lang
-    })
+    const comments = await readData(input);
+    console.log('comments: ', comments.length);
     
-    console.log(keywords.join('; '))
+    const sentiments = await Promise.all(comments.map(async comment => {
+        if (comment.textOriginal) {
+            return await sentiment.getSentiment(comment.textOriginal, language)
+        }
+    }))
+    const sentimentsScores = (sentiments.filter(s => s) as SentimentRecord[]).map(s => s.score)
+    console.log('===\nSentiments:')
+    console.log('mean: ', mean(sentimentsScores))
+    console.log('median: ', median(sentimentsScores))
+    
 }
