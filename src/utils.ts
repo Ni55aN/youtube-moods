@@ -1,6 +1,6 @@
-const axios = require('axios');
+import axios from 'axios'
 
-async function apiRequest(path, params) {
+export async function apiRequest(path: string, params: {[key: string]: string | null}) {
     try {
         const response = await axios.get(`https://www.googleapis.com/youtube/v3/${path}`, {
             params
@@ -12,5 +12,3 @@ async function apiRequest(path, params) {
         throw e;
     }
 }
-
-module.exports = { apiRequest }

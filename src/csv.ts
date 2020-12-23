@@ -1,27 +1,27 @@
-const fs = require('fs');
-const { parse } = require('json2csv');
-const { fromPath } = require("fast-csv");
+import fs from 'fs'
+import { parse } from 'json2csv'
+import { parseFile } from "fast-csv"
  
 const FIELDS = ['authorDisplayName', 'textOriginal', 'publishedAt', 'videoId', 'authorChannelId']
 let isEmpty = true
 
-function clearFile(filename) {
+export function clearFile(filename: string) {
     fs.writeFileSync(filename, '');
     isEmpty = true;
 }
 
-function appendData(filename, items) {
+export function appendData<T>(filename: string, items: T[]) {
     const csv = parse(items, { fields: FIELDS, header: isEmpty });
     
     fs.appendFileSync(filename, `${csv}\n`, { encoding: 'utf-8' });
     isEmpty = false;
 }
 
-async function readData(filename) {
-    const items = [];
+export async function readData<T>(filename: string): Promise<T[]> {
+    const items: T[] = [];
     
     return new Promise((res, rej) => {
-        fromPath(filename, { headers: FIELDS })
+        parseFile(filename, { headers: FIELDS })
             .on("data", function(data){
                 items.push(data);
             })
@@ -33,11 +33,4 @@ async function readData(filename) {
                 res(rest);
             });
     });
-}
-
-
-module.exports = {
-    clearFile,
-    appendData,
-    readData
 }
