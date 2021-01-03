@@ -1,0 +1,8 @@
+version: "3.8"
+
+services:
+  dostoevsky:
+    build: ./dostoevsky
+    ports:
+      - 8888:80
+      
