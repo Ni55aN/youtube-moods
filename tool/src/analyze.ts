@@ -2,6 +2,7 @@ import franc from 'franc'
 import { mean, median } from 'stats-lite'
 import { SentimentAnalyzer, SentimentRecord } from './node-nlp'
 import { readData } from './csv'
+import { getDostoevskySentiments } from './dostoevsky';
 
 export  async function analyze(input: string, language: string) {
     const sentiment = new SentimentAnalyzer();
@@ -9,6 +10,8 @@ export  async function analyze(input: string, language: string) {
     const comments = await readData(input);
     console.log('comments: ', comments.length);
     
+    // =============
+
     const sentiments = await Promise.all(comments.map(async comment => {
         if (comment.textOriginal) {
             return await sentiment.getSentiment(comment.textOriginal, language)
@@ -20,6 +23,19 @@ export  async function analyze(input: string, language: string) {
     console.log('median: ', median(sentimentsScores))
     console.log('number of positive: ', sentimentsScores.filter(s => s > 0).length)
     console.log('number of negative: ', sentimentsScores.filter(s => s < 0).length)
+
+    // =============
+
+    const dostoevskySentiments = await getDostoevskySentiments(comments.map(comment => comment.textOriginal || ''))
+    const dostoevskySentimentsScores = dostoevskySentiments.map(t => 'negative' in t ? -t.negative : ('positive' in t ? t.positive : 0))
+
+    console.log('===\nDostoevsky Sentiments:')
+    console.log('mean: ', mean(dostoevskySentimentsScores))
+    console.log('median: ', median(dostoevskySentimentsScores))
+    console.log('number of positive: ', dostoevskySentimentsScores.filter(s => s > 0).length)
+    console.log('number of negative: ', dostoevskySentimentsScores.filter(s => s < 0).length)
+
+    // =============
 
     const languages = comments.map(comment => ({
         comment,
