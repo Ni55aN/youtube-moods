@@ -1,4 +1,5 @@
 import fs from 'fs'
+import { resolve } from 'path'
 import { youtube_v3 } from 'googleapis'
 import { parse } from 'json2csv'
 import { parseFile } from "fast-csv"
