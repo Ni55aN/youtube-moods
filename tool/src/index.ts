@@ -29,9 +29,9 @@ void async function() {
           },
         }).argv;
       
-        if (!key) throw new Error('')
-        if (!out) throw new Error('')
-        if (!videoId) throw new Error('')
+        if (!key) throw new Error('Key isnt defined')
+        if (!out) throw new Error('output path isnt defined')
+        if (!videoId) throw new Error('video id isnt defined')
 
         await download(key, videoId, out, limit)
       break;
@@ -47,8 +47,8 @@ void async function() {
           }
         }).argv;
 
-        if (!input) throw new Error('')
-        if (!lang) throw new Error('')
+        if (!input) throw new Error('input path isnt defined')
+        if (!lang) throw new Error('lang isnt defined')
 
         await analyze(input, lang);
       break;
