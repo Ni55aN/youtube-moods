@@ -5,4 +5,8 @@ services:
     build: ./dostoevsky
     ports:
       - 8888:80
+  stanza:
+    build: ./stanza
+    ports:
+      - 8889:80
       

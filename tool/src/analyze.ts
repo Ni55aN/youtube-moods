@@ -3,6 +3,7 @@ import { mean, median } from 'stats-lite'
 import { SentimentAnalyzer, SentimentRecord } from './node-nlp'
 import { readData } from './csv'
 import { getDostoevskySentiments } from './dostoevsky';
+import { getTokens, StanzaWord } from './stanza';
 
 export  async function analyze(input: string, language: string) {
     const sentiment = new SentimentAnalyzer();
@@ -47,4 +48,21 @@ export  async function analyze(input: string, language: string) {
 
     console.log('===\nLanguages usage:')
     console.log(langsUsage.map(item => `${item.lang} -> ${item.count}`).join('\n'))
+
+    // =============
+    const messagesResponse = await getTokens(comments.map(comment => comment.textOriginal || ''))
+    const words = messagesResponse.reduce((list, sentences) => {
+        const words = sentences.reduce((words, s) => ([...words, ...s.words]), [] as StanzaWord[])
+        return [...list, ...words]
+    }, [] as StanzaWord[])
+
+    const tokens = words.filter(w => !['DET', 'PUNCT', 'NUM'].includes(w.upos)).map(w => w.lemma)
+    const keywords = Array.from(new Set(tokens))
+
+    const keywordsFrequency = keywords.map(keyword => ({ word: keyword, count: tokens.filter(t => t === keyword).length }))
+
+    keywordsFrequency.sort((a, b) => b.count - a.count)
+
+    console.log(keywordsFrequency.slice(0, 100));
+
 }
