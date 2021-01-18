@@ -1,13 +1,23 @@
 
 import { google, youtube_v3 } from 'googleapis'
 import { clearFile, appendData } from './csv'
+import { retry } from './utils'
 
 async function getComments(key: string, videoId: string, pageToken: string | null): Promise<youtube_v3.Schema$CommentThreadListResponse> {
     const youtube = google.youtube('v3')
-    const resp = await youtube.commentThreads.list({ videoId, part: ['snippet'], pageToken: pageToken || undefined, key })
+    try {
+        const resp = await retry({
+            retries: 5,
+            fn: () => youtube.commentThreads.list({ videoId, part: ['snippet'], pageToken: pageToken || undefined, key }),
+            log: () => console.log('Retry ', pageToken)
+        })
 
-    console.debug('got results ', resp.data.items?.length, '\nnext token ', resp.data.nextPageToken)
-    return resp.data;
+        console.debug('got results ', resp.data.items?.length, '\nnext token ', resp.data.nextPageToken)
+        return resp.data;
+    } catch (e) {
+        console.log('getComments failed: ', e);
+        throw e
+    }
 }
 
 export async function download(key: string, videoId: string, out: string, limit: number | null) {
