@@ -8,7 +8,7 @@ async function getComments(key: string, videoId: string, pageToken: string | nul
     try {
         const resp = await retry({
             retries: 5,
-            fn: () => youtube.commentThreads.list({ videoId, part: ['snippet'], pageToken: pageToken || undefined, key }),
+            fn: () => youtube.commentThreads.list({ videoId, maxResults: 100, part: ['snippet'], pageToken: pageToken || undefined, key }),
             log: () => console.log('Retry ', pageToken)
         })
 
