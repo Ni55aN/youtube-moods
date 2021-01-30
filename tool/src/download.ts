@@ -37,6 +37,7 @@ export async function download(key: string, videoId: string, out: string, limit:
         count += comments.length;
 
         appendData(out, comments);
+        console.log('total loaded: ', count)
     } while(token && (limit === null || count < limit));
 
     console.log('Done')
