@@ -17,7 +17,7 @@
     "googleapis": "^66.0.0",
     "json2csv": "^4.5.1",
     "keyword-extractor": "0.0.16",
-    "lodash": "^4.17.20",
+    "lodash": "^4.17.21",
     "node-nlp": "^4.17.2",
     "stats-lite": "^2.2.0",
     "yargs": "^13.2.4"
