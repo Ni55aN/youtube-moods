@@ -8,7 +8,7 @@ async function getComments(key: string, videoId: string, pageToken: string | nul
     try {
         const resp = await retry({
             retries: 5,
-            fn: () => youtube.commentThreads.list({ videoId, maxResults: 100, part: ['snippet'], pageToken: pageToken || undefined, key }),
+            fn: () => youtube.commentThreads.list({ videoId, maxResults: 100, part: ['snippet', 'replies'], pageToken: pageToken || undefined, key }),
             log: () => console.log('Retry ', pageToken)
         })
 
@@ -20,23 +20,33 @@ async function getComments(key: string, videoId: string, pageToken: string | nul
     }
 }
 
+type Comment = { id?: string | null } & youtube_v3.Schema$CommentSnippet
+
 export async function download(key: string, videoId: string, out: string, limit: number | null) {
     let token = null;
     let count = 0;
-    
+
     clearFile(out);
     do {
         const data: youtube_v3.Schema$CommentThreadListResponse = await getComments(key, videoId, token);
 
         token = data.nextPageToken;
-        
+
         const comments = (data.items || []).map(item => {
-            return item.snippet?.topLevelComment?.snippet;
-        }).filter(item => item) as youtube_v3.Schema$CommentSnippet[]
+            return {
+                id: item.id,
+                ...item.snippet?.topLevelComment?.snippet,
+                replies: item.replies?.comments?.map(item => ({ id: item.id, ...item.snippet })) || []
+            }
+        }).filter(item => item && item.replies)
+        const flattenComments = comments.reduce((list, { replies, ...comment }) => ([...list, comment, ...replies]), [] as Comment[])
 
-        count += comments.length;
+        count += flattenComments.length;
 
-        appendData(out, comments);
+        appendData(out, flattenComments.map(item => ({
+            ...item,
+            textOriginal: item.textOriginal?.replace(/(\r|\n|\r\n)+/gm, '\\n')
+        })));
         console.log('total loaded: ', count)
     } while(token && (limit === null || count < limit));
 
