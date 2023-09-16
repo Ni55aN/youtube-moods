@@ -6,7 +6,8 @@
   "license": "MIT",
   "scripts": {
     "download": "ts-node ./src/index.ts --command download",
-    "analyze": "ts-node ./src/index.ts --command analyze"
+    "analyze": "ts-node ./src/index.ts --command analyze",
+    "stats": "ts-node ./src/index.ts --command stats"
   },
   "dependencies": {
     "@types/lodash": "^4.14.167",

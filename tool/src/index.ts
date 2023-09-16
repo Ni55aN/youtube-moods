@@ -1,11 +1,12 @@
 import * as yargs from 'yargs'
 import { analyze } from './analyze';
 import { download } from './download';
+import { stats } from './stats';
 
 void async function() {
   const { command } = yargs.options({
     command: {
-      choices: ['download', 'analyze']
+      choices: ['download', 'analyze', 'stats']
     }}).argv
 
     switch (command) {
@@ -52,6 +53,22 @@ void async function() {
 
         await analyze(input, lang);
       break;
+      case 'stats':
+        const { key: statsKey, ids: statsIds } = yargs.options({
+          key: {
+              type: 'string',
+              description: 'Youtube API key'
+          },
+          ids: {
+              type: 'string',
+              description: 'List of videoIds'
+          }
+        }).argv;
+      
+        if (!statsKey) throw new Error('Key isnt defined')
+        if (!statsIds) throw new Error('video id isnt defined')
 
+        await stats(statsKey, statsIds.split(','))
+      break;
     }
 }()
